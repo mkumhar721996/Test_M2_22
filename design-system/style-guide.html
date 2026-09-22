@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yellow Design System — Style Guide</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="prototype-utils.css" />
+<style>
+  body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    margin: 0;
+    padding: var(--space-4);
+    line-height: var(--line-height-base);
+  }
+  section {
+    margin-bottom: calc(var(--space-4) * 3);
+  }
+  h1 {
+    font-size: calc(var(--font-size-lg) * 1.5);
+    font-weight: var(--font-weight-bold);
+  }
+  h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    border-bottom: var(--border-width-sm) solid var(--color-border);
+    padding-bottom: var(--space-2);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+  .swatch {
+    border: var(--border-width-sm) solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .swatch-color {
+    height: 72px;
+  }
+  .swatch-label {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    font-size: var(--font-size-sm);
+  }
+  .swatch-label code {
+    display: block;
+    color: var(--color-fg-muted);
+  }
+  .dimension-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: var(--border-width-sm) solid var(--color-border);
+  }
+  .dimension-bar {
+    background-color: var(--color-primary);
+    height: var(--space-2);
+  }
+  .dimension-name {
+    width: 160px;
+    font-size: var(--font-size-sm);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding: var(--space-3) 0;
+  }
+  .composite-box {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width-sm) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+</style>
+</head>
+<body>
+
+<h1>Yellow Design System</h1>
+<p class="text-muted">Tokens, utilities, and components for the brand's yellow visual identity.</p>
+
+<section>
+  <h2>Color tokens</h2>
+  <div class="grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-fg);"></div>
+      <div class="swatch-label">color-fg<code>#1c1a0a</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-bg);"></div>
+      <div class="swatch-label">color-bg<code>#fffdf5</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-primary);"></div>
+      <div class="swatch-label">color-primary<code>#eab308</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-primary-hover);"></div>
+      <div class="swatch-label">color-primary-hover<code>#ca8a04</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-surface);"></div>
+      <div class="swatch-label">color-surface<code>#ffffff</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-border);"></div>
+      <div class="swatch-label">color-border<code>#e0d9b8</code></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background-color: var(--color-fg-muted);"></div>
+      <div class="swatch-label">color-fg-muted<code>#6b6550</code></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Spacing scale</h2>
+  <div class="dimension-row">
+    <div class="dimension-name">space-1 (4px)</div>
+    <div class="dimension-bar" style="width: var(--space-1);"></div>
+  </div>
+  <div class="dimension-row">
+    <div class="dimension-name">space-2 (8px)</div>
+    <div class="dimension-bar" style="width: var(--space-2);"></div>
+  </div>
+  <div class="dimension-row">
+    <div class="dimension-name">space-3 (12px)</div>
+    <div class="dimension-bar" style="width: var(--space-3);"></div>
+  </div>
+  <div class="dimension-row">
+    <div class="dimension-name">space-4 (16px)</div>
+    <div class="dimension-bar" style="width: var(--space-4);"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Radii</h2>
+  <div class="row">
+    <div style="width: 72px; height: 72px; background: var(--color-primary); border-radius: var(--radius-sm);"></div>
+    <span>radius-sm (4px)</span>
+  </div>
+  <div class="row">
+    <div style="width: 72px; height: 72px; background: var(--color-primary); border-radius: var(--radius-md);"></div>
+    <span>radius-md (8px)</span>
+  </div>
+  <div class="row">
+    <div style="width: 72px; height: 72px; background: var(--color-primary); border-radius: var(--radius-lg);"></div>
+    <span>radius-lg (16px)</span>
+  </div>
+</section>
+
+<section>
+  <h2>Border widths</h2>
+  <div class="row">
+    <div style="width: 120px; height: 40px; border: var(--border-width-sm) solid var(--color-fg);"></div>
+    <span>border-width-sm (1px)</span>
+  </div>
+  <div class="row">
+    <div style="width: 120px; height: 40px; border: var(--border-width-md) solid var(--color-fg);"></div>
+    <span>border-width-md (2px)</span>
+  </div>
+</section>
+
+<section>
+  <h2>Type scale</h2>
+  <p style="font-size: var(--font-size-sm);">font-size-sm — The quick brown fox jumps over the lazy dog.</p>
+  <p style="font-size: var(--font-size-md);">font-size-md — The quick brown fox jumps over the lazy dog.</p>
+  <p style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold);">font-size-lg — The quick brown fox jumps over the lazy dog.</p>
+  <p style="font-family: var(--font-family-base);">font-family-base — Inter, system-ui, sans-serif</p>
+  <p style="font-weight: var(--font-weight-regular);">font-weight-regular (400)</p>
+  <p style="font-weight: var(--font-weight-bold);">font-weight-bold (700)</p>
+  <p>line-height-base: <code style="color: var(--color-fg-muted);">1.5</code></p>
+</section>
+
+<section>
+  <h2>Composite tokens</h2>
+  <div class="row">
+    <div class="composite-box" style="box-shadow: var(--space-1) var(--space-1) var(--space-3) var(--color-border);">shadow-sm</div>
+    <div class="composite-box">
+      <span class="heading">typography-heading</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Component aliases</h2>
+  <table style="width:100%; border-collapse: collapse; font-size: var(--font-size-sm);">
+    <thead>
+      <tr style="text-align:left; border-bottom: var(--border-width-sm) solid var(--color-border);">
+        <th style="padding: var(--space-2);">Alias token</th>
+        <th style="padding: var(--space-2);">Resolves to</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding: var(--space-2);">button.primary.background</td><td style="padding: var(--space-2);">color-primary</td></tr>
+      <tr><td style="padding: var(--space-2);">button.primary.foreground</td><td style="padding: var(--space-2);">color-fg</td></tr>
+      <tr><td style="padding: var(--space-2);">button.primary.border</td><td style="padding: var(--space-2);">color-primary</td></tr>
+      <tr><td style="padding: var(--space-2);">button.primary.hover-background</td><td style="padding: var(--space-2);">color-primary-hover</td></tr>
+      <tr><td style="padding: var(--space-2);">button.secondary.background</td><td style="padding: var(--space-2);">color-surface</td></tr>
+      <tr><td style="padding: var(--space-2);">button.secondary.foreground</td><td style="padding: var(--space-2);">color-primary</td></tr>
+      <tr><td style="padding: var(--space-2);">button.secondary.border</td><td style="padding: var(--space-2);">color-primary</td></tr>
+      <tr><td style="padding: var(--space-2);">card.default.background</td><td style="padding: var(--space-2);">color-surface</td></tr>
+      <tr><td style="padding: var(--space-2);">card.default.border</td><td style="padding: var(--space-2);">color-border</td></tr>
+      <tr><td style="padding: var(--space-2);">card.default.foreground</td><td style="padding: var(--space-2);">color-fg</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Buttons</h2>
+  <div class="row">
+    <button class="btn btn-primary">Primary action</button>
+    <button class="btn btn-secondary">Secondary action</button>
+  </div>
+</section>
+
+<section>
+  <h2>Cards</h2>
+  <div class="grid">
+    <div class="card">
+      <h3 class="card-title">Card title</h3>
+      <p class="card-body">Card body copy using card.default tokens for background, border, and text color.</p>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Another card</h3>
+      <p class="card-body">Cards use radius-lg, space-4 padding, and shadow-sm for elevation.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Chips</h2>
+  <div class="row">
+    <span class="chip">Default chip</span>
+    <span class="chip chip-primary">Primary chip</span>
+  </div>
+</section>
+
+<section>
+  <h2>Form controls</h2>
+  <div class="field" style="max-width: 320px;">
+    <label class="label" for="example-input">Email address</label>
+    <input class="input" type="email" id="example-input" placeholder="you@example.com" />
+    <span class="help-text">We'll never share your email.</span>
+  </div>
+</section>
+
+</body>
+</html>
