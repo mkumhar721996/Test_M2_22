@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TEST-M2-22-STORY-004 — Duplicate Detection and HR Override</title>
+<style>
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-fg: #1c1a0a; /** Primary body text color. Warm near-black, paired with color-bg for AA body-text contrast. */
+  --color-bg: #fffdf5; /** Page background. Warm off-white that keeps the brand's yellow undertone without becoming a saturated background. */
+  --color-primary: #eab308; /** Brand yellow. Primary action color for buttons, links, and emphasis. */
+  --color-primary-hover: #ca8a04; /** Darker yellow used for hover/active states on primary-colored elements. */
+  --color-surface: #ffffff; /** Elevated surface color for cards and inputs, distinct from the warm page background. */
+  --color-border: #e0d9b8; /** Default border color for cards, inputs, and dividers. */
+  --color-fg-muted: #6b6550; /** Secondary text color for captions, helper text, and muted labels. */
+  --space-1: 4px; /** Smallest spacing step, used for tight internal gaps. */
+  --space-2: 8px; /** Base spacing step, used for icon/label gaps and compact padding. */
+  --space-3: 12px; /** Medium spacing step, used for control padding. */
+  --space-4: 16px; /** Large spacing step, used for card padding and section gaps. */
+  --radius-sm: 4px; /** Corner radius for small controls like chips and inputs. */
+  --radius-md: 8px; /** Corner radius for buttons and form controls. */
+  --radius-lg: 16px; /** Corner radius for cards and other large surfaces. */
+  --border-width-sm: 1px; /** Default hairline border width. */
+  --border-width-md: 2px; /** Emphasized border width, used for focus rings and active states. */
+  --font-size-sm: 0.875rem; /** Small type size for captions, chips, and helper text. */
+  --font-size-md: 1rem; /** Base body type size. */
+  --font-size-lg: 1.5rem; /** Heading type size. */
+  --font-family-base: Inter, system-ui, sans-serif; /** Default font stack for all text. */
+  --font-weight-regular: 400; /** Default text weight. */
+  --font-weight-bold: 700; /** Emphasized text weight, used for headings and button labels. */
+  --line-height-base: 1.5; /** Default unitless line-height for body text. */
+  --shadow-sm: 0px 2px 6px 0px rgb(10.98% 10.196% 3.922% / 0.12); /** Soft elevation shadow used for cards. */
+  --button-primary-background: var(--color-primary); /** Primary button fill color. */
+  --button-primary-foreground: var(--color-fg); /** Primary button text color; dark text reads clearly on the yellow fill. */
+  --button-primary-border: var(--color-primary); /** Primary button border color, matching its fill. */
+  --button-primary-hover-background: var(--color-primary-hover); /** Primary button fill color on hover/active. */
+  --button-secondary-background: var(--color-surface); /** Secondary button fill color. */
+  --button-secondary-foreground: var(--color-primary); /** Secondary button text color. */
+  --button-secondary-border: var(--color-primary); /** Secondary button border color. */
+  --card-default-background: var(--color-surface); /** Default card fill color. */
+  --card-default-border: var(--color-border); /** Default card border color. */
+  --card-default-foreground: var(--color-fg); /** Default card text color. */
+}
+
+</style>
+<style>
+/* Layout & text helpers */
+
+.text-muted {
+  color: var(--color-fg-muted);
+}
+
+.heading {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-base);
+  color: var(--color-fg);
+  margin: 0;
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-width-sm) solid transparent;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-base);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: var(--border-width-md) solid var(--color-primary-hover);
+  outline-offset: var(--space-1);
+}
+
+.btn-primary {
+  background-color: var(--button-primary-background);
+  color: var(--button-primary-foreground);
+  border-color: var(--button-primary-border);
+}
+
+.btn-primary:hover {
+  background-color: var(--button-primary-hover-background);
+  border-color: var(--button-primary-hover-background);
+}
+
+.btn-secondary {
+  background-color: var(--button-secondary-background);
+  color: var(--button-secondary-foreground);
+  border-color: var(--button-secondary-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-bg);
+}
+
+/* Card */
+
+.card {
+  background-color: var(--card-default-background);
+  border: var(--border-width-sm) solid var(--card-default-border);
+  border-radius: var(--radius-lg);
+  color: var(--card-default-foreground);
+  padding: var(--space-4);
+  box-shadow: 0 var(--space-1) var(--space-3) var(--color-border);
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--card-default-foreground);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.card-body {
+  font-size: var(--font-size-md);
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+/* Chips */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: var(--border-width-sm) solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-fg);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+}
+
+.chip-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-fg);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Form controls */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.label {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-fg);
+}
+
+.input {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-md);
+  color: var(--color-fg);
+  background-color: var(--color-surface);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 var(--border-width-md) var(--color-primary-hover);
+}
+
+.help-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-muted);
+}
+
+</style>
+<style>
+  /* App nav: left sidebar — Dashboard · Employees · Registrations · Audit Log · Settings
+     (this project ships its own "Yellow Design System"; no arc platform chrome is used) */
+
+  body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    margin: 0;
+    line-height: var(--line-height-base);
+  }
+
+  /* Reviewer bar overrides — buttons must use pointer cursor + brand color per guidelines */
+  #review-bar button {
+    background: none;
+    border: none;
+    color: var(--color-primary-hover);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    padding: var(--space-2) var(--space-2);
+    min-height: 44px;
+  }
+  #review-bar button:hover { color: var(--color-fg); }
+  #review-bar button:focus-visible {
+    outline: var(--border-width-md) solid var(--color-primary-hover);
+    outline-offset: var(--space-1);
+  }
+
+  /* Touch target compliance (WCAG 2.1 AA, §1) without altering the design system's visual scale */
+  .btn { min-height: 44px; }
+
+  .app-shell {
+    display: flex;
+    min-height: calc(100dvh - 46px);
+  }
+  .app-nav {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-right: var(--border-width-sm) solid var(--color-border);
+    padding: var(--space-4) var(--space-2);
+  }
+  .app-nav-item {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-1);
+    min-height: 44px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+  }
+  .app-nav-item.active {
+    background: var(--color-primary);
+    color: var(--color-fg);
+    font-weight: var(--font-weight-bold);
+  }
+  .app-main {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-4);
+    max-width: 880px;
+  }
+  @media (max-width: 768px) {
+    .app-shell { flex-direction: column; }
+    .app-nav {
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      overflow-x: auto;
+      gap: var(--space-1);
+      border-right: none;
+      border-bottom: var(--border-width-sm) solid var(--color-border);
+    }
+    .app-nav-item { white-space: nowrap; margin-bottom: 0; }
+  }
+
+  .row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+
+  .btn-sm { padding: var(--space-1) var(--space-3); font-size: var(--font-size-sm); min-height: 40px; }
+  .toggle-group { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .toggle-group .btn-secondary.active {
+    background: var(--color-primary);
+    color: var(--color-fg);
+    border-color: var(--color-primary);
+  }
+
+  /* Alert / block banners — no error/success color tokens exist in this design system,
+     so meaning is carried by icon + label + border weight, never color alone (§3). */
+  .alert-block {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    padding: var(--space-4);
+    border: var(--border-width-md) solid var(--color-fg);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    margin-bottom: var(--space-4);
+  }
+  .alert-block.alert-positive { border-color: var(--color-primary); }
+  .alert-icon { font-size: var(--font-size-lg); line-height: 1; }
+  .alert-title { font-weight: var(--font-weight-bold); margin: 0 0 var(--space-1) 0; }
+  .alert-body { margin: 0; color: var(--color-fg-muted); }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+  @media (min-width: 640px) { .compare-grid { grid-template-columns: 1fr 1fr; } }
+  .compare-col {
+    border: var(--border-width-sm) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    background: var(--color-bg);
+  }
+  .compare-heading {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .compare-list { margin: 0; }
+  .compare-list dt { font-size: var(--font-size-sm); color: var(--color-fg-muted); margin-top: var(--space-2); }
+  .compare-list dt:first-child { margin-top: 0; }
+  .compare-list dd { margin: 0; font-size: var(--font-size-md); }
+
+  .field-flag {
+    display: inline-block;
+    border: var(--border-width-md) solid var(--color-primary-hover);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-2);
+    font-weight: var(--font-weight-bold);
+  }
+  .field-flag-note {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-fg-muted);
+    margin-top: var(--space-1);
+  }
+
+  .field-error {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fg);
+    margin: var(--space-1) 0 0 0;
+  }
+
+  .audit-entry { border-bottom: var(--border-width-sm) solid var(--color-border); padding: var(--space-3) 0; }
+  .audit-entry:last-child { border-bottom: none; }
+  .audit-entry-new {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    border-bottom: none;
+  }
+  .audit-entry-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .audit-entry-reason { margin: var(--space-1) 0 0 0; color: var(--color-fg-muted); }
+
+  .form-card { max-width: 640px; }
+  .wide-card { max-width: 760px; }
+
+  textarea.input { resize: vertical; font-family: var(--font-family-base); }
+
+  .screen { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Reviewer bar -->
+<div id="review-bar" style="position:fixed;top:0;left:0;right:0;z-index:9999;
+  display:flex;align-items:center;gap:10px;padding:8px 16px;
+  background:var(--color-surface);border-bottom:1px solid var(--color-border);font-size:13px;font-family:var(--font-family-base)">
+  <span style="font-family:var(--font-family-base);color:var(--color-fg-muted);font-weight:var(--font-weight-bold)">TEST-M2-22-STORY-004</span>
+  <button id="prev-btn">← Prev</button>
+  <span id="screen-label" style="flex:1;text-align:center;font-weight:600;color:var(--color-fg)"></span>
+  <button id="next-btn">Next →</button>
+</div>
+<div style="height:46px"></div><!-- spacer -->
+
+<div class="app-shell">
+  <nav class="app-nav" aria-label="Primary">
+    <a class="app-nav-item" href="#" onclick="return false;">Dashboard</a>
+    <a class="app-nav-item" href="#" onclick="return false;">Employees</a>
+    <a class="app-nav-item active" href="#" onclick="return false;" aria-current="page">Registrations</a>
+    <a class="app-nav-item" href="#" onclick="return false;">Audit Log</a>
+    <a class="app-nav-item" href="#" onclick="return false;">Settings</a>
+  </nav>
+
+  <main class="app-main">
+    <div id="screens">
+
+      <!-- Screen: New Employee Registration
+           Notes:
+             - Prefilled with a submission that intentionally matches an existing active
+               employee's email (Priya Nair) so the reviewer can trigger AC1 with one click.
+             - "Simulate national ID duplicate" exercises the other half of AC1 (national ID
+               match against a deactivated record) without re-typing the form.
+             - "Simulate a clean submission" demonstrates the success state (no duplicate
+               found) inline, per the states rule (§5) — empty/loading/error/partial/success
+               all need a design, not just the duplicate path.
+      -->
+      <!-- State: form — default -->
+      <div class="screen" data-name="Registration Form">
+        <div class="card form-card">
+          <h1 class="heading">New employee registration</h1>
+          <p class="text-muted">Submitted by Jordan Blake · HR Admin</p>
+          <form id="registration-form" onsubmit="return false;">
+            <div class="field">
+              <label class="label" for="reg-name">Full name</label>
+              <input class="input" id="reg-name" type="text" value="Priya N. Anand" />
+            </div>
+            <div class="field">
+              <label class="label" for="reg-email">Email address</label>
+              <input class="input" id="reg-email" type="email" value="priya.nair@acmehr.com" />
+            </div>
+            <div class="field">
+              <label class="label" for="reg-nid">National ID</label>
+              <input class="input" id="reg-nid" type="text" value="IN-9931-2207" />
+              <span class="help-text">Government-issued identifier used for payroll and compliance checks.</span>
+            </div>
+            <div class="field">
+              <label class="label" for="reg-dept">Department</label>
+              <input class="input" id="reg-dept" type="text" value="Finance" />
+            </div>
+
+            <div id="submit-loading" style="display:none;">
+              <p class="text-muted">Checking for duplicate email and national ID matches…</p>
+            </div>
+            <div id="submit-success" style="display:none;">
+              <div class="alert-block alert-positive">
+                <span class="alert-icon" aria-hidden="true">✓</span>
+                <div>
+                  <p class="alert-title">No duplicates found</p>
+                  <p class="alert-body">Registration submitted successfully — no matching email or national ID was found among active or deactivated records.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: var(--space-4);">
+              <button class="btn btn-primary" onclick="submitRegistration(this, 'email')">Submit registration</button>
+            </div>
+          </form>
+          <p class="help-text" style="margin-top: var(--space-4);">Reviewer shortcuts:</p>
+          <div class="row">
+            <button class="btn btn-secondary btn-sm" onclick="submitRegistration(this, 'nationalId')">Simulate national ID duplicate</button>
+            <button class="btn btn-secondary btn-sm" onclick="submitRegistration(this, 'clean')">Simulate a clean submission</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Duplicate Detected — HR Admin
+           Notes:
+             - Satisfies AC1: blocks submission and names the exact duplicate field.
+             - "Demo scenario" toggle swaps between an email match (active record) and a
+               national ID match (deactivated record) — both branches of AC1 in one screen.
+             - Satisfies AC6 by contrast: HR admins see "Merge" and "Override" actions here;
+               the "Viewing as" toggle jumps to the Hiring Manager version of this same
+               block (screen 7) where those actions are absent.
+      -->
+      <!-- State: duplicate blocked — HR admin (override + merge available) -->
+      <div class="screen" data-name="Duplicate Detected — HR Admin">
+        <div class="card wide-card">
+          <div class="row-between">
+            <h1 class="heading">Registration blocked</h1>
+            <div class="toggle-group" role="group" aria-label="Viewing as">
+              <span class="text-muted" style="font-size:var(--font-size-sm);">Viewing as:</span>
+              <button class="btn btn-secondary btn-sm active" onclick="goToRole(this, 1)">HR Admin</button>
+              <button class="btn btn-secondary btn-sm" onclick="goToRole(this, 6)">Hiring Manager</button>
+            </div>
+          </div>
+          <div class="toggle-group" style="margin: var(--space-3) 0;" role="group" aria-label="Demo scenario">
+            <span class="text-muted" style="font-size:var(--font-size-sm);">Demo scenario:</span>
+            <button class="btn btn-secondary btn-sm active" onclick="setDuplicateField(this, 'email')">Email match</button>
+            <button class="btn btn-secondary btn-sm" onclick="setDuplicateField(this, 'nationalId')">National ID match</button>
+          </div>
+
+          <div id="dup-banner-hr"></div>
+          <div id="dup-compare-hr"></div>
+
+          <div class="row" style="margin-top: var(--space-4);">
+            <button class="btn btn-primary" onclick="show(2)">Merge into existing record</button>
+            <button class="btn btn-secondary" onclick="openOverride()">Override &amp; submit anyway</button>
+            <button class="btn btn-secondary" onclick="show(0)">Cancel submission</button>
+          </div>
+          <p class="help-text" style="margin-top: var(--space-3);">HR admins can merge the new details into the existing record or override the block with a documented reason. Hiring managers do not see these options.</p>
+        </div>
+      </div>
+
+      <!-- Screen: Merge Review
+           Notes:
+             - Satisfies AC2: reviewing and confirming a merge updates the existing record
+               and clears the duplicate block (see next screen for the cleared state).
+      -->
+      <!-- State: merge review -->
+      <div class="screen" data-name="Merge Review">
+        <div class="card wide-card">
+          <h1 class="heading">Review merge</h1>
+          <p class="text-muted">Merging updates the existing employee record with the new submission's details and clears this duplicate block.</p>
+          <div id="merge-compare"></div>
+          <div class="field" style="margin-top: var(--space-4);">
+            <label class="label" for="merge-note">Merge note (optional)</label>
+            <textarea class="input" id="merge-note" rows="2" placeholder="e.g. Name and national ID corrected per HR verification"></textarea>
+          </div>
+          <div id="merge-loading" style="display:none;"><p class="text-muted">Merging records…</p></div>
+          <div class="row" style="margin-top: var(--space-4);">
+            <button class="btn btn-primary" onclick="confirmMerge(this)">Merge into existing record</button>
+            <button class="btn btn-secondary" onclick="show(1)">Back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Merge Success
+           Notes:
+             - Confirms AC2's second half: existing record updated, duplicate block cleared.
+      -->
+      <!-- State: merge complete — duplicate block cleared -->
+      <div class="screen" data-name="Merge Success">
+        <div class="card form-card">
+          <div class="alert-block alert-positive">
+            <span class="alert-icon" aria-hidden="true">✓</span>
+            <div>
+              <p class="alert-title">Record merged</p>
+              <p class="alert-body">EMP-1042 (Priya Nair) has been updated with the new submission's details. The duplicate block is now cleared.</p>
+            </div>
+          </div>
+          <dl class="compare-list">
+            <dt>Name</dt><dd>Priya N. Anand</dd>
+            <dt>Email</dt><dd>priya.nair@acmehr.com</dd>
+            <dt>National ID</dt><dd>IN-9931-2207</dd>
+            <dt>Department</dt><dd>Finance</dd>
+            <dt>Status</dt><dd><span class="chip chip-primary">Active</span></dd>
+          </dl>
+          <button class="btn btn-primary" style="margin-top: var(--space-4);" onclick="show(0)">Start a new registration</button>
+        </div>
+      </div>
+
+      <!-- Screen: Override Reason
+           Notes:
+             - Satisfies AC3 (accepted with a documented reason) and AC4 (rejected without one).
+             - Clicking "Confirm override" with an empty textarea shows an inline, specific
+               error and keeps focus on the field — nothing is cleared or lost (§6).
+             - Type a reason and confirm to proceed to the audit log screen.
+      -->
+      <!-- State: override reason — validation error on empty submit -->
+      <div class="screen" data-name="Override Reason">
+        <div class="card form-card">
+          <h1 class="heading">Override duplicate block</h1>
+          <p class="text-muted">Overriding accepts this submission despite the duplicate match. A documented reason is required and will be recorded in the audit log.</p>
+          <div class="field">
+            <label class="label" for="override-reason">Reason for override <span aria-hidden="true">*</span></label>
+            <textarea class="input" id="override-reason" rows="3" placeholder="e.g. Legitimate rehire with a legacy record pending closure" aria-required="true"></textarea>
+            <span class="help-text">Required — explain why this duplicate should be allowed.</span>
+            <p id="override-error" class="field-error" style="display:none;" role="alert">⚠ A reason is required before you can override this block.</p>
+          </div>
+          <div id="override-loading" style="display:none;"><p class="text-muted">Recording override…</p></div>
+          <div class="row" style="margin-top: var(--space-3);">
+            <button class="btn btn-primary" onclick="confirmOverride(this)">Confirm override</button>
+            <button class="btn btn-secondary" onclick="show(1)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Override Applied — Audit Log
+           Notes:
+             - Satisfies AC5: the newest entry (highlighted) shows the overriding HR admin's
+               identity, the reason they provided, and a timestamp — written the moment the
+               override in the previous screen was confirmed.
+             - A pre-existing entry is shown beneath it so the log reads as a real, ongoing
+               record rather than a single one-off event.
+      -->
+      <!-- State: override accepted — audit entry recorded -->
+      <div class="screen" data-name="Override Applied — Audit Log">
+        <div class="card wide-card">
+          <div class="alert-block alert-positive">
+            <span class="alert-icon" aria-hidden="true">✓</span>
+            <div>
+              <p class="alert-title">Submission accepted with override</p>
+              <p class="alert-body">The registration was accepted despite the duplicate match. This action has been written to the audit log below.</p>
+            </div>
+          </div>
+          <h2 class="card-title" style="font-size: var(--font-size-md);">Audit log — duplicate overrides</h2>
+          <div id="audit-log-list"></div>
+          <button class="btn btn-primary" style="margin-top: var(--space-4);" onclick="show(0)">Start a new registration</button>
+        </div>
+      </div>
+
+      <!-- Screen: Duplicate Detected — Hiring Manager
+           Notes:
+             - Satisfies AC6: the same duplicate block a hiring manager would see, with no
+               merge or override actions — only the option to cancel the submission and a
+               note to contact HR. Compare against screen 2 (HR Admin) via the role toggle.
+      -->
+      <!-- State: duplicate blocked — non-HR-admin (no override path) -->
+      <div class="screen" data-name="Duplicate Detected — Hiring Manager">
+        <div class="card wide-card">
+          <div class="row-between">
+            <h1 class="heading">Registration blocked</h1>
+            <div class="toggle-group" role="group" aria-label="Viewing as">
+              <span class="text-muted" style="font-size:var(--font-size-sm);">Viewing as:</span>
+              <button class="btn btn-secondary btn-sm" onclick="goToRole(this, 1)">HR Admin</button>
+              <button class="btn btn-secondary btn-sm active" onclick="goToRole(this, 6)">Hiring Manager</button>
+            </div>
+          </div>
+          <div id="dup-banner-manager" style="margin-top: var(--space-3);"></div>
+          <div id="dup-compare-manager"></div>
+          <p class="help-text" style="margin-top: var(--space-3);">Only HR admins can merge duplicate records or override this block. Contact your HR admin to resolve this submission.</p>
+          <div class="row" style="margin-top: var(--space-3);">
+            <button class="btn btn-secondary" onclick="show(0)">Cancel submission</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  // Inline fixture data — no network calls, no real persistence.
+  const EXISTING = {
+    email: { id: 'EMP-1042', name: 'Priya Nair', email: 'priya.nair@acmehr.com', nationalId: 'IN-8827-4419', department: 'Finance', status: 'Active' },
+    nationalId: { id: 'EMP-0731', name: 'Marcus Webb', email: 'm.webb@acmehr.com', nationalId: 'UK-2210-9987', department: 'Sales', status: 'Deactivated' }
+  };
+  const SUBMISSION = {
+    email: { name: 'Priya N. Anand', email: 'priya.nair@acmehr.com', nationalId: 'IN-9931-2207', department: 'Finance' },
+    nationalId: { name: 'Marcus J. Webb', email: 'marcus.webb@newmail.com', nationalId: 'UK-2210-9987', department: 'Sales' }
+  };
+  const auditLog = [
+    { admin: 'Amara Osei (HR Admin)', reason: 'Confirmed this is a false-positive match — different employee, shared family email domain during initial signup.', timestamp: 'Sep 18, 2026, 2:47 PM' }
+  ];
+  const state = { duplicateField: 'email' };
+  let justRecorded = false;
+
+  function fieldLabel(field) { return field === 'email' ? 'email address' : 'national ID'; }
+
+  function renderDuplicateScreens() {
+    const field = state.duplicateField;
+    const existing = EXISTING[field];
+    const submission = SUBMISSION[field];
+    const label = fieldLabel(field);
+    const value = field === 'email' ? submission.email : submission.nationalId;
+
+    const bannerHtml = `
+      <div class="alert-block">
+        <span class="alert-icon" aria-hidden="true">⚠</span>
+        <div>
+          <p class="alert-title">Submission blocked — duplicate ${label}</p>
+          <p class="alert-body">The ${label} <strong>${value}</strong> matches an existing ${existing.status.toLowerCase()} employee record (${existing.name}, ${existing.id}).</p>
+        </div>
+      </div>`;
+
+    const compareHtml = `
+      <div class="compare-grid">
+        <div class="compare-col">
+          <h3 class="compare-heading">New submission</h3>
+          <dl class="compare-list">
+            <dt>Name</dt><dd>${submission.name}</dd>
+            <dt>Email</dt><dd>${field === 'email' ? `<span class="field-flag">${submission.email}</span><span class="field-flag-note">⚠ duplicate match</span>` : submission.email}</dd>
+            <dt>National ID</dt><dd>${field === 'nationalId' ? `<span class="field-flag">${submission.nationalId}</span><span class="field-flag-note">⚠ duplicate match</span>` : submission.nationalId}</dd>
+            <dt>Department</dt><dd>${submission.department}</dd>
+          </dl>
+        </div>
+        <div class="compare-col">
+          <h3 class="compare-heading">Existing record <span class="chip">${existing.status}</span></h3>
+          <dl class="compare-list">
+            <dt>Employee ID</dt><dd>${existing.id}</dd>
+            <dt>Name</dt><dd>${existing.name}</dd>
+            <dt>Email</dt><dd>${field === 'email' ? `<span class="field-flag">${existing.email}</span><span class="field-flag-note">⚠ duplicate match</span>` : existing.email}</dd>
+            <dt>National ID</dt><dd>${field === 'nationalId' ? `<span class="field-flag">${existing.nationalId}</span><span class="field-flag-note">⚠ duplicate match</span>` : existing.nationalId}</dd>
+            <dt>Department</dt><dd>${existing.department}</dd>
+          </dl>
+        </div>
+      </div>`;
+
+    document.getElementById('dup-banner-hr').innerHTML = bannerHtml;
+    document.getElementById('dup-compare-hr').innerHTML = compareHtml;
+    document.getElementById('dup-banner-manager').innerHTML = bannerHtml;
+    document.getElementById('dup-compare-manager').innerHTML = compareHtml;
+    document.getElementById('merge-compare').innerHTML = compareHtml;
+  }
+
+  function renderAuditLog() {
+    const container = document.getElementById('audit-log-list');
+    container.innerHTML = auditLog.map((entry, i) => `
+      <div class="audit-entry ${i === 0 && justRecorded ? 'audit-entry-new' : ''}">
+        <div class="audit-entry-head">
+          <strong>${entry.admin}</strong>
+          <span class="row" style="gap: var(--space-2);">
+            ${i === 0 && justRecorded ? '<span class="chip chip-primary">Just recorded</span>' : ''}
+            <span class="text-muted" style="font-size: var(--font-size-sm);">${entry.timestamp}</span>
+          </span>
+        </div>
+        <p class="audit-entry-reason">${entry.reason}</p>
+      </div>
+    `).join('');
+  }
+
+  function setActiveToggle(btn) {
+    const group = btn.parentElement;
+    group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function setDuplicateField(btn, field) {
+    setActiveToggle(btn);
+    state.duplicateField = field;
+    renderDuplicateScreens();
+  }
+
+  function goToRole(btn, screenIndex) {
+    document.querySelectorAll('[role="group"][aria-label="Viewing as"]').forEach(group => {
+      group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    });
+    btn.classList.add('active');
+    show(screenIndex);
+  }
+
+  function submitRegistration(btn, scenario) {
+    const form = document.getElementById('registration-form');
+    const loading = document.getElementById('submit-loading');
+    const success = document.getElementById('submit-success');
+    const buttons = form.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true);
+    success.style.display = 'none';
+    loading.style.display = 'block';
+
+    setTimeout(() => {
+      loading.style.display = 'none';
+      buttons.forEach(b => b.disabled = false);
+      if (scenario === 'clean') {
+        success.style.display = 'block';
+        return;
+      }
+      state.duplicateField = scenario;
+      renderDuplicateScreens();
+      show(1);
+    }, 350);
+  }
+
+  function openOverride() {
+    document.getElementById('override-reason').value = '';
+    document.getElementById('override-error').style.display = 'none';
+    show(4);
+  }
+
+  function confirmMerge(btn) {
+    const loading = document.getElementById('merge-loading');
+    btn.disabled = true;
+    loading.style.display = 'block';
+    setTimeout(() => {
+      loading.style.display = 'none';
+      btn.disabled = false;
+      show(3);
+    }, 400);
+  }
+
+  function confirmOverride(btn) {
+    const textarea = document.getElementById('override-reason');
+    const error = document.getElementById('override-error');
+    const reason = textarea.value.trim();
+
+    if (!reason) {
+      error.style.display = 'block';
+      textarea.setAttribute('aria-invalid', 'true');
+      textarea.focus();
+      return;
+    }
+
+    error.style.display = 'none';
+    textarea.removeAttribute('aria-invalid');
+    const loading = document.getElementById('override-loading');
+    btn.disabled = true;
+    loading.style.display = 'block';
+
+    setTimeout(() => {
+      loading.style.display = 'none';
+      btn.disabled = false;
+      auditLog.unshift({
+        admin: 'Jordan Blake (HR Admin)',
+        reason: reason,
+        timestamp: 'Sep 22, 2026, 9:14 AM'
+      });
+      justRecorded = true;
+      renderAuditLog();
+      show(5);
+    }, 350);
+  }
+
+  // Reviewer bar wiring (canonical scaffold, §11)
+  const screens = Array.from(document.querySelectorAll('.screen'));
+  let cur = 0;
+  function show(i) {
+    cur = Math.max(0, Math.min(screens.length - 1, i));
+    screens.forEach((s, j) => s.style.display = j === cur ? 'block' : 'none');
+    document.getElementById('screen-label').textContent =
+      `${cur + 1} / ${screens.length}: ${screens[cur].dataset.name}`;
+  }
+  document.getElementById('prev-btn').onclick = () => show(cur - 1);
+  document.getElementById('next-btn').onclick = () => show(cur + 1);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') show(cur + 1);
+    if (e.key === 'ArrowLeft') show(cur - 1);
+  });
+
+  renderDuplicateScreens();
+  renderAuditLog();
+  show(0);
+</script>
+
+</body>
+</html>
+
+<!-- arc:css-inlined -->
